@@ -1,0 +1,5 @@
+ffmpy==0.4.0
+Flask==3.0.3
+Flask_Cors==5.0.0
+pytube==15.0.0
+waitress==3.0.0
