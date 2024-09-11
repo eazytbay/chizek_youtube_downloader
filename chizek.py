@@ -2,17 +2,19 @@
 
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
-from waitress import serve
 from pytube import YouTube
 import os
 from ffmpy import FFmpeg
 import re
 
 app = Flask(__name__)
-CORS(app)
 app.config.from_pyfile('config.py')
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow requests from the React frontend
+app.config['CORS_HEADERS'] = 'Content-Type'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-
+@app.route('/')
+def home():
+    return 'Welcome to Chizek YouTube DownLoader!'
 
 def clean_filename(name):
     """Sanitize filenames by replacing invalid characters."""
@@ -21,6 +23,7 @@ def clean_filename(name):
 
 @app.route('/download', methods=['POST'])
 def download_youtube_video():
+    pass
     """Handle the video download request from YouTube and process it."""
     url = request.json['url']
     res = request.json.get('res', '720p')  # Resolution: Default is 720p
@@ -115,5 +118,5 @@ def convert_audio_to_wav(title):
 
 
 if __name__ == '__main__':
-    serve(app, host='0.0.0.0', port=5000, threads=1)  # Use Waitress to serve the app
+    app.run(host='0.0.0.0', port=8000, debug=True)  # Use Waitress to serve the app
 

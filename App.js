@@ -2,13 +2,20 @@ import React, { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [errorMessage, setErrorMessage] = useState('');
   const [url, setUrl] = useState('');
   const [resolution, setResolution] = useState('720p');
   const [videoFormat, setVideoFormat] = useState('mp4');
   const [audioFormat, setAudioFormat] = useState('');
+  const isValidYouTubeUrl = (url) => {
+  const pattern = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
+  return pattern.test(url);
+  };
 
   const handleDownload = async (e) => {
     e.preventDefault();
+    if (!isValideYouTubeUrl(url) {
+      alert('Error! Please enter a valid YouTube Url.');
 
     const requestBody = {
       url,
@@ -29,7 +36,7 @@ function App() {
         const downloadUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = downloadUrl;
-        a.download = 'downloaded_video';
+        a.download = response.headers.get('Video-Title');
         a.click();
       } else {
         const errorData = await response.json();
@@ -92,6 +99,8 @@ function App() {
 
         <button type="submit">Download</button>
       </form>
+      {/* Display error message */}
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
       <footer>
         <p>&copy; 2024 Chizek YouTube Downloader. All rights reserved.</p>
       </footer>
