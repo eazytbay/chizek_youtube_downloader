@@ -8,27 +8,39 @@ from ffmpy import FFmpeg
 import re
 
 app = Flask(__name__)
-app.config.from_pyfile('config.py')
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow requests from the React frontend
 app.config['CORS_HEADERS'] = 'Content-Type'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 @app.route('/')
 def home():
-    return 'Welcome to Chizek YouTube DownLoader!'
+    return 'Welcome to Chizek YouTube Downloader!'
 
 def clean_filename(name):
     """Sanitize filenames by replacing invalid characters."""
     return re.sub(r'[\\/*?:"<>|]', '_', name)
 
+# New endpoint to fetch the YouTube thumbnail
+@app.route('/api/get-thumbnail', methods=['POST'])
+def get_thumbnail():
+    try:
+        url = request.json['url']
+        yt = YouTube(url)
+        thumbnail_url = yt.thumbnail_url
+        return jsonify({'thumbnailUrl': thumbnail_url}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/download', methods=['POST'])
 def download_youtube_video():
-    pass
     """Handle the video download request from YouTube and process it."""
     url = request.json['url']
     res = request.json.get('res', '720p')  # Resolution: Default is 720p
     vid_format = request.json.get('vid_format', 'mp4')  # Video format: Default is MP4
     aud_format = request.json.get('aud_format', None)  # Optional audio-only download
+
+    # Supported video formats
+    supported_formats = ['mp4', '3gp', 'mkv', 'webm']
 
     try:
         yt = YouTube(url)
@@ -47,8 +59,8 @@ def download_youtube_video():
             elif aud_format == 'mp3':
                 aud_stream = yt.streams.filter(only_audio=True).filter(file_extension='mp4').first()
                 aud_stream.download('downloads/')
-                ext = 'mp3'
                 convert_audio_to_mp3(title)
+                ext = 'mp3'
             elif aud_format == 'wav':
                 aud_stream = yt.streams.filter(only_audio=True).filter(file_extension='webm').first()
                 aud_stream.download('downloads/')
@@ -59,6 +71,9 @@ def download_youtube_video():
         else:  # Handle video downloads
             if res not in ['1080p', '720p', '480p', '360p']:
                 return jsonify({'error': 'Invalid resolution.'}), 400
+
+            if vid_format not in supported_formats:
+                return jsonify({'error': 'Invalid video format. Supported formats: mp4, 3gp, mkv, webm.'}), 400
 
             vid_stream = yt.streams.filter(res=res, file_extension=vid_format).first()
 
@@ -118,5 +133,5 @@ def convert_audio_to_wav(title):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)  # Use Waitress to serve the app
+    app.run(host='0.0.0.0', port=8000, debug=True)
 
