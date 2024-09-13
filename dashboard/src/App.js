@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from './components/Header'; // Import Header component
+import Header from './components/Header/Header'; // Import Header component
 import Footer from './components/Footer';
 import DownloadButton from './components/DownloadButton';
 import './App.css'; // Ensure you import the CSS file
