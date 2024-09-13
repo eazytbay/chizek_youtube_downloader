@@ -34,13 +34,20 @@ function DownloadButton({ url, quality, audioFormat, videoFormat }) {
 
       // Handle the response from the backend (which returns a downloadable file)
       const blob = await response.blob();
+      // Extraction of the filename from the headers
+      const contentDisp = response.headers.get('Content-Disposition')
+      const filenameMatch = contentDisp && contentDisp.match
+      const filename = filenameMatch ? filenameMatch[1] :
+      // Triggering the download
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = downloadUrl;
-      a.download = `downloaded_file.${isAudioOnly ? audioFormat : videoFormat}`;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();
+      // Object URL is released after download
+      window.URL.revokeObjectURL(downloadURL);
 
     } catch (error) {
       console.error('Download failed:', error);
