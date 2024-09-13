@@ -74,6 +74,8 @@ function App() {
         >
           <option value="">Select Video Format</option>
           <option value="mp4">MP4</option>
+	  <option value="mkv">MKV</option>
+	  <option value="3gp">3GP</option>
           <option value="webm">WebM</option>
         </select>
 
