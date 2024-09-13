@@ -1,0 +1,78 @@
+.App {
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+}
+
+.container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+input[type="text"], select, button {
+  display: block;
+  width: calc(100% - 22px);
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1.5px solid #FF0000;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+label {
+  margin: 10px 0 5px;
+  display: block;
+  font-weight: bold;
+}
+
+.thumbnail {
+  margin: 20px 0; /* Adds spacing around the thumbnail */
+  text-align: center; /* Centers the thumbnail */
+}
+
+.thumbnail img {
+  max-width: 100%; /* Ensures the image is responsive */
+  height: auto;
+  border-radius: 8px; /* Optional: adds rounded corners to the thumbnail */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a shadow around the image */
+}
+
+.footer {
+  margin-top: 20px; /* Space between container and footer */
+  font-weight: bold;
+  font-style: italic;
+  color: #333;
+  text-align: center; /* Center align the footer text */
+}
