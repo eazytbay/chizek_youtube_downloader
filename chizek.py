@@ -12,9 +12,6 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow requ
 app.config['CORS_HEADERS'] = 'Content-Type'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-@app.route('/')
-def home():
-    return 'Welcome to Chizek YouTube Downloader!'
 
 def clean_filename(name):
     """Sanitize filenames by replacing invalid characters."""
@@ -25,24 +22,28 @@ def clean_filename(name):
 def get_thumbnail():
     try:
         url = request.json['url']
+        if not url:
+            return jsonify({'error': 'Enter a valid URL'}), 400
         yt = YouTube(url)
         thumbnail_url = yt.thumbnail_url
         return jsonify({'thumbnailUrl': thumbnail_url}), 200
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({'error': 'Invalid YouTube URL'}), 400
 
 @app.route('/download', methods=['POST'])
 def download_youtube_video():
     """Handle the video download request from YouTube and process it."""
-    url = request.json['url']
-    res = request.json.get('res', '720p')  # Resolution: Default is 720p
-    vid_format = request.json.get('vid_format', 'mp4')  # Video format: Default is MP4
-    aud_format = request.json.get('aud_format', None)  # Optional audio-only download
+    try:
+        url = request.json.get('url', None)
+        if not url:
+            return jsonify({'error': 'Enter a valid URL'}), 400
+        res = request.json.get('res', '720p')  # Resolution: Defauilt is 720p
+        vid_format = request.json.get('vid_format', 'mp4')  # Video format: Default is MP4
+        aud_format = request.json.get('aud_format', None)  # Optional audio-only download
 
     # Supported video formats
-    supported_formats = ['mp4', '3gp', 'mkv', 'webm']
+        supported_formats = ['mp4', '3gp', 'mkv', 'webm']
 
-    try:
         yt = YouTube(url)
         title = clean_filename(yt.title)
         print(f"Downloading video: {title}")
