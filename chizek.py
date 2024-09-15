@@ -1,16 +1,24 @@
 #!/usr/bin/env python3
 
-from flask import Flask, jsonify, request, Response
+from flask import Flask, send_from_directory, jsonify, request, Response
 from flask_cors import CORS
 from pytube import YouTube
 import os
 from ffmpy import FFmpeg
 import re
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow requests from the React frontend
+app = Flask(__name__, static_folder='dashboard/build/static', static_url_path='/')
+#CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow requests from the React frontend
 app.config['CORS_HEADERS'] = 'Content-Type'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+
+def serve_react_app(path):
+    if path != '' and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, 'index.html')
 
 
 def clean_filename(name):
