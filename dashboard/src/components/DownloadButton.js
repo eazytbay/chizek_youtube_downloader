@@ -15,7 +15,7 @@ function DownloadButton({ url, quality, audioFormat, videoFormat }) {
       const isAudioOnly = audioFormat === 'audio-only';
 
       // Send a POST request to the Flask backend
-      const response = await fetch('http://localhost:8000/download', {
+      const response = await fetch('http://localhost:8000/api/get-thumbnail', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,8 +36,8 @@ function DownloadButton({ url, quality, audioFormat, videoFormat }) {
       const blob = await response.blob();
       // Extraction of the filename from the headers
       const contentDisp = response.headers.get('Content-Disposition')
-      const filenameMatch = contentDisp && contentDisp.match
-      const filename = filenameMatch ? filenameMatch[1] :
+      const filenameMatch = contentDisp && contentDisp.match(/filename="(.+)"/); //match expression adjusted
+      const filename = filenameMatch ? filenameMatch[1] : 'default_filename.txt'; //Provision of a default filename
       // Triggering the download
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -47,7 +47,7 @@ function DownloadButton({ url, quality, audioFormat, videoFormat }) {
       a.click();
       a.remove();
       // Object URL is released after download
-      window.URL.revokeObjectURL(downloadURL);
+      window.URL.revokeObjectURL(downloadUrl);
 
     } catch (error) {
       console.error('Download failed:', error);
