@@ -15,7 +15,7 @@ function DownloadButton({ url, quality, audioFormat, videoFormat }) {
       const isAudioOnly = audioFormat === 'audio-only';
 
       // Send a POST request to the Flask backend
-      const response = await fetch('http://localhost:8000/api/get-thumbnail', {
+      const response = await fetch('http://localhost:8000/download', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
