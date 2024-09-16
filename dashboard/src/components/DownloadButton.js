@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function DownloadButton({ url, quality, audioFormat, videoFormat }) {
+function DownloadButton({ url, quality, format }) {
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = async () => {
@@ -12,8 +12,6 @@ function DownloadButton({ url, quality, audioFormat, videoFormat }) {
     setIsDownloading(true);
 
     try {
-      const isAudioOnly = audioFormat === 'audio-only';
-
       // Send a POST request to the Flask backend
       const response = await fetch('http://localhost:8000/download', {
         method: 'POST',
@@ -22,9 +20,9 @@ function DownloadButton({ url, quality, audioFormat, videoFormat }) {
         },
         body: JSON.stringify({
           url,
-          res: isAudioOnly ? null : quality, // Only send resolution if it's a video download
-          aud_format: isAudioOnly ? audioFormat : null, // Send audio format if audio-only
-          vid_format: isAudioOnly ? null : videoFormat, // Send video format if not audio-only
+          res: quality, // Video resolution, if applicable
+          vid_format: format, // Video format (e.g., mp4, mkv) or audio format (e.g., mp3)
+          aud_format: null,  // No audio-only format since it's removed
         }),
       });
 
@@ -35,10 +33,11 @@ function DownloadButton({ url, quality, audioFormat, videoFormat }) {
       // Handle the response from the backend (which returns a downloadable file)
       const blob = await response.blob();
       // Extraction of the filename from the headers
-      const contentDisp = response.headers.get('Content-Disposition')
-      const filenameMatch = contentDisp && contentDisp.match(/filename="(.+)"/); //match expression adjusted
-      const filename = filenameMatch ? filenameMatch[1] : 'default_filename.txt'; //Provision of a default filename
-      // Triggering the download
+      const contentDisp = response.headers.get('Content-Disposition');
+      const filenameMatch = contentDisp && contentDisp.match(/filename="(.+)"/);
+      const filename = filenameMatch ? filenameMatch[1] : 'default_filename.txt'; // Provide a default filename if none is set
+
+      // Trigger the download
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = downloadUrl;
@@ -46,7 +45,8 @@ function DownloadButton({ url, quality, audioFormat, videoFormat }) {
       document.body.appendChild(a);
       a.click();
       a.remove();
-      // Object URL is released after download
+
+      // Release the object URL after download
       window.URL.revokeObjectURL(downloadUrl);
 
     } catch (error) {

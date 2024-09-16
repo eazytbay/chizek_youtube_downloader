@@ -42,8 +42,8 @@ function App() {
   const handleFormatChange = (e) => {
     const selectedFormat = e.target.value;
     setFormat(selectedFormat);
-    if (selectedFormat === 'audio-only') {
-      setQuality(''); // Clear video quality if audio-only is selected
+    if (selectedFormat === 'mp4' || selectedFormat === 'mkv' || selectedFormat === '3gp' || selectedFormat === 'webm') {
+      setQuality(''); // Clear video quality if a video format is selected
     }
   };
 
@@ -65,22 +65,22 @@ function App() {
           </div>
         )}
 
-        {/* Single format toggle for both audio and video */}
+        {/* Format selection for audio and video */}
         <label>Format (Audio/Video):</label>
         <select
           value={format}
           onChange={handleFormatChange}
         >
           <option value="">Select Format</option>
-	  {/* Video formats */}
+          {/* Video formats */}
           <option value="mp4">MP4 (Video)</option>
           <option value="mkv">MKV (Video)</option>
           <option value="3gp">3GP (Video)</option>
           <option value="webm">WebM (Video)</option>
-	  {/* Audio formats */}
+          {/* Audio formats */}
           <option value="mp3">MP3 (Audio)</option>
-          <option value="flac">FLAC (Audio)</option>
           <option value="wav">WAV (Audio)</option>
+          <option value="flac">FLAC (Audio)</option>
         </select>
 
         {/* Resolution dropdown - only show when a video format is selected */}
