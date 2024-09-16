@@ -7,14 +7,13 @@ import './App.css'; // import the CSS file
 function App() {
   const [url, setUrl] = useState('');
   const [quality, setQuality] = useState('');
-  const [audioFormat, setAudioFormat] = useState('');
-  const [videoFormat, setVideoFormat] = useState('');
+  const [format, setFormat] = useState(''); // Single format for both video/audio
   const [thumbnail, setThumbnail] = useState(''); // State to hold thumbnail URL
 
   // Fetch thumbnail URL from the backend
   const fetchThumbnail = async (youtubeUrl) => {
     try {
-      const response = await fetch ('http://localhost:8000/api/get-thumbnail', { // backend route
+      const response = await fetch('http://localhost:8000/api/get-thumbnail', { // backend route
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,11 +39,11 @@ function App() {
     }
   };
 
-  const handleAudioFormatChange = (e) => {
-    const format = e.target.value;
-    setAudioFormat(format);
-    if (format === 'audio-only') {
-      setVideoFormat(''); // Clear video format
+  const handleFormatChange = (e) => {
+    const selectedFormat = e.target.value;
+    setFormat(selectedFormat);
+    if (selectedFormat === 'audio-only') {
+      setQuality(''); // Clear video quality if audio-only is selected
     }
   };
 
@@ -66,32 +65,26 @@ function App() {
           </div>
         )}
 
-        <label>Video Format:</label>
+        {/* Single format toggle for both audio and video */}
+        <label>Format (Audio/Video):</label>
         <select
-          value={videoFormat}
-          onChange={(e) => setVideoFormat(e.target.value)}
-          disabled={audioFormat === 'audio-only'} // Disable if audio only is selected
+          value={format}
+          onChange={handleFormatChange}
         >
-          <option value="">Select Video Format</option>
-          <option value="mp4">MP4</option>
-	  <option value="mkv">MKV</option>
-	  <option value="3gp">3GP</option>
-          <option value="webm">WebM</option>
+          <option value="">Select Format</option>
+	  {/* Video formats */}
+          <option value="mp4">MP4 (Video)</option>
+          <option value="mkv">MKV (Video)</option>
+          <option value="3gp">3GP (Video)</option>
+          <option value="webm">WebM (Video)</option>
+	  {/* Audio formats */}
+          <option value="mp3">MP3 (Audio)</option>
+          <option value="flac">FLAC (Audio)</option>
+          <option value="wav">WAV (Audio)</option>
         </select>
 
-        <label>Audio Format:</label>
-        <select
-          value={audioFormat}
-          onChange={handleAudioFormatChange}
-        >
-          <option value="">Select Audio Format</option>
-          <option value="audio-only">Audio Only</option>
-          <option value="mp3">MP3</option>
-          <option value="flac">FLAC</option>
-          <option value="wav">WAV</option>
-        </select>
-
-        {videoFormat && (
+        {/* Resolution dropdown - only show when a video format is selected */}
+        {(format === 'mp4' || format === 'mkv' || format === '3gp' || format === 'webm') && (
           <>
             <label>Resolution/Quality:</label>
             <select
@@ -106,13 +99,14 @@ function App() {
             </select>
           </>
         )}
+
         <DownloadButton
           url={url}
           quality={quality}
-          audioFormat={audioFormat}
-          videoFormat={videoFormat}
+          format={format}
         />
       </div>
+
       <div className="footer">
         <Footer />
       </div>
