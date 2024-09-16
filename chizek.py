@@ -7,8 +7,8 @@ import os
 from ffmpy import FFmpeg
 import re
 
-app = Flask(__name__, static_folder='dashboard/build/static', static_url_path='/')
-#CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow requests from the React frontend
+app = Flask(__name__, static_folder='dashboard/build', static_url_path='/')
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow requests from the React frontend
 app.config['CORS_HEADERS'] = 'Content-Type'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
