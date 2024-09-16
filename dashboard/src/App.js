@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from './components/Header/Header'; // Import Header component
 import Footer from './components/Footer';
 import DownloadButton from './components/DownloadButton';
-import './App.css'; // Ensure you import the CSS file
+import './App.css'; // import the CSS file
 
 function App() {
   const [url, setUrl] = useState('');
@@ -14,7 +14,7 @@ function App() {
   // Fetch thumbnail URL from the backend
   const fetchThumbnail = async (youtubeUrl) => {
     try {
-      const response = await fetch('/api/get-thumbnail', { // Replace with actual backend route
+      const response = await fetch ('http://localhost:8000/api/get-thumbnail', { // backend route
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
