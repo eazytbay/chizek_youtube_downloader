@@ -6,9 +6,11 @@ from pytube import YouTube
 import os
 from ffmpy import FFmpeg
 import re
+import traceback
+from pytube.exceptions import AgeRestrictedError
 
 app = Flask(__name__, static_folder='dashboard/build', static_url_path='/')
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})  # Allow requests from the React frontend
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow requests from the React frontend
 app.config['CORS_HEADERS'] = 'Content-Type'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -36,6 +38,7 @@ def get_thumbnail():
         thumbnail_url = yt.thumbnail_url
         return jsonify({'thumbnailUrl': thumbnail_url}), 200
     except Exception as e:
+        print(f"Error getting thumbnail: {e}")
         return jsonify({'error': 'Invalid YouTube URL'}), 400
 
 @app.route('/download', methods=['POST'])
@@ -45,7 +48,7 @@ def download_youtube_video():
         url = request.json.get('url', None)
         if not url:
             return jsonify({'error': 'Enter a valid URL'}), 400
-        res = request.json.get('res', '720p')  # Resolution: Defauilt is 720p
+        res = request.json.get('res', '720p')  # Resolution: Default is 720p
         vid_format = request.json.get('vid_format', 'mp4')  # Video format: Default is MP4
         aud_format = request.json.get('aud_format', None)  # Optional audio-only download
 
@@ -60,20 +63,21 @@ def download_youtube_video():
 
         # Handle audio-only downloads
         if aud_format:
+            download_ext = aud_stream.subtype
             if aud_format == 'flac':
                 aud_stream = yt.streams.filter(only_audio=True).filter(file_extension='webm').first()
                 aud_stream.download('downloads/')
-                convert_audio_to_flac(title)
+                convert_audio_to_flac(title, downloaded_ext)
                 ext = 'flac'
             elif aud_format == 'mp3':
                 aud_stream = yt.streams.filter(only_audio=True).filter(file_extension='mp4').first()
                 aud_stream.download('downloads/')
-                convert_audio_to_mp3(title)
+                convert_audio_to_mp3(title, downloaded_ext)
                 ext = 'mp3'
             elif aud_format == 'wav':
                 aud_stream = yt.streams.filter(only_audio=True).filter(file_extension='webm').first()
                 aud_stream.download('downloads/')
-                convert_audio_to_wav(title)
+                convert_audio_to_wav(title, downloaded_ext)
                 ext = 'wav'
             else:
                 return jsonify({'error': 'Invalid audio format.'}), 400
@@ -85,20 +89,35 @@ def download_youtube_video():
                 return jsonify({'error': 'Invalid video format. Supported formats: mp4, 3gp, mkv, webm.'}), 400
 
             vid_stream = yt.streams.filter(res=res, file_extension=vid_format).first()
+            if not vid_stream:
+                print(f"Stream not found for {res} resolution and {vid_format} format.")
+                return jsonify({'error': 'Resolution/format not available.'}), 400
+            print(f"Stream found: {vid_stream}")
 
             if vid_stream:
                 vid_stream.download('downloads/')
                 ext = vid_format
             else:
                 return jsonify({'error': 'Resolution/format not available.'}), 400
+        #create the downloads directory if it does not exist
+        os.makedirs('downlaods', exist_ok=True)
 
         # Prepare file for download
         file_path = os.path.join('downloads', f'{title}.{ext}')
-        with open(file_path, 'rb') as file:
-            resp_file = file.read()
+        if not os.path.exists(file_path):
+            print(f"Fiile not found: {file_path}")
+            return jsonify({'error': 'File not found after download.'})
+        try:
+           with open(file_path, 'rb') as file:
+               resp_file = file.read()
 
         # Clean up the file after sending the response
-        os.remove(file_path)
+           os.remove(file_path)
+           print(f"File successfully deleted: {file_path}")
+        except Exception as e:
+            print(f"Error reading or deleting the file: {e}")
+            return jsonify({'error': 'Failed to read the file or delete it.'})
+
 
         return Response(
             response=resp_file,
@@ -106,11 +125,15 @@ def download_youtube_video():
             headers={
                 'Content-Type': f'video/{ext}' if not aud_format else f'audio/{ext}',
                 'Content-Disposition': f'attachment; filename="{title}.{ext}"',
-                'Video-Title': title
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type',
             }
         )
 
     except Exception as e:
+        print(f"Error: {e}")
+        print(traceback.format_exc())
         return jsonify({'error': str(e)}), 500
 
 
