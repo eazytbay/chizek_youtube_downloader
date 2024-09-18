@@ -21,7 +21,7 @@ def serve_react_app(path):
 
 def clean_filename(name):
     """Sanitize filenames by replacing invalid characters."""
-    return re.sub(r'[\\/*?:"<>|]', '_', name)
+    return re.sub(r'[\\/*?#:"<>|]', '_', name)
 
 # New endpoint to fetch the YouTube thumbnail
 @app.route('/api/get-thumbnail', methods=['POST'])
@@ -97,11 +97,11 @@ def download_youtube_video():
             status=200,
             headers={
                 'Content-Type': f'video/{ext}' if not aud_format else f'audio/{ext}',
-                'Content-Disposition': f'attachment; filename="{title}.{ext}"',
+                'Content-Disposition': f'attachment; filename="{title.encode("utf-8").decode("latin-1", "ignore")}.{ext}"',
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
                 'Access-Control-Allow-Headers': 'Content-Type',
-            }
+            },
         )
 
     except Exception as e:
@@ -111,4 +111,3 @@ def download_youtube_video():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
-
