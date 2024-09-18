@@ -99,7 +99,7 @@ The backend server should now be running on http://localhost:8000/.
 
 # Backend Routes
 - POST /api/download
-  - This endpoint accepts a JSON payload containing the YouTube URL and selected download options (resolution, format) and returns the download link for the requested video/audio.
+This endpoint accepts a JSON payload containing the YouTube URL and selected download options (resolution, format) and returns the download link for the requested video/audio.
 
 # Usage
 - Run both the frontend and backend servers (npm start for the frontend and flask run for the backend).
