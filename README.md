@@ -40,10 +40,9 @@ Chizek YouTube Downloader provides a seamless interface for downloading YouTube 
 
 - Steps to Run the Frontend Locally
     1. Clone the repository:
-bash
-Copy code
-git clone https://github.com/your-username/chizek-youtube-downloader.git
-cd chizek-youtube-downloader
+       '''bash
+       git clone https://github.com/your-username/chizek-youtube-downloader.git
+       cd chizek-youtube-downloader
 
     2. Navigate to the frontend/ directory:
 bash
