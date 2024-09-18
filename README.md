@@ -110,37 +110,36 @@ This endpoint accepts a JSON payload containing the YouTube URL and selected dow
 
 # Folder Structure
 Here's a basic overview of the project structure:
-
-graphql							Copy code
+graphql                                                 
 chizek-youtube-downloader/
 ├── backend/
 │   ├── chizek.py                     # Flask app file
 │   ├── requirements.txt              # Python dependencies
 ├── frontend/
 │   ├── dashboard
-│   │   ├──node_modules/	      #Installed node modules
+│   │   ├──node_modules/              #Installed node modules
 │   │   ├── public/
-│   │	│   ├── favicon.ico	      # Custom favicon
-│   │	│   ├── chizek_logo.png       # Custom logo
-│   │	│   ├── index.html	      # HTML entry point
-│   │	│   ├── manifest.json	      # Manifest file
+│   │   │   ├── favicon.ico           # Custom favicon
+│   │   │   ├── chizek_logo.png       # Custom logo
+│   │   │   ├── index.html            # HTML entry point
+│   │   │   ├── manifest.json         # Manifest file
 │   │   ├── src/
-│   │	│   ├── components/	      # React components
-│   │	│   │   ├── Header
-│   │	│   │	│   ├──Header.js      # Header component
-│   │	│   │	│   ├──Header.css     # Header styling
-│   │   │   │   ├── URLInput.js	      # Input for YouTube URL
+│   │   │   ├── components/           # React components
+│   │   │   │   ├── Header
+│   │   │   │   │   ├──Header.js      # Header component
+│   │   │   │   │   ├──Header.css     # Header styling
+│   │   │   │   ├── URLInput.js       # Input for YouTube URL
 │   │   │   │   ├── DownloadButton.js # Download button
 │   │   │   │   ├── Dropdown.js       # Dropdowns for formats/resolution
-│   │   │   │   ├── Footer.js	      # Footer component
-│   │   │   ├── App.js		      # Main app component
-│   │   │   ├── App.css		      # App styling
-│   │   │   ├── index.js	      # Main entry point
-│   │   ├── .eslintrc.js	      # ESLint style rules
-│   │   ├── .gitignore		      # Files to be ignored by GIT
-│   │   ├── package.json	      # Frontend dependencies
-│   │   ├── package-lock.json	      # Lock files
-└── README.md			      # Project documentation
+│   │   │   │   ├── Footer.js         # Footer component
+│   │   │   ├── App.js                # Main app component
+│   │   │   ├── App.css               # App styling
+│   │   │   ├── index.js              # Main entry point
+│   │   ├── .eslintrc.js              # ESLint style rules
+│   │   ├── .gitignore                # Files to be ignored by GIT
+│   │   ├── package.json              # Frontend dependencies
+│   │   ├── package-lock.json         # Lock files
+└── README.md                         # Project documentation
 
 # Contributing
 Contributions are welcome! To contribute:
